@@ -1,6 +1,11 @@
 package academy.devdojo.springboot_essentials.service;
 
 import academy.devdojo.springboot_essentials.domain.Anime;
+import academy.devdojo.springboot_essentials.mapper.AnimeMapper;
+import academy.devdojo.springboot_essentials.repository.AnimeRepository;
+import academy.devdojo.springboot_essentials.requests.AnimePostRequestBody;
+import academy.devdojo.springboot_essentials.requests.AnimePutRequestBody;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -8,18 +13,33 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AnimeService {
-    private List<Anime> animes = List.of(new Anime ("Naruto", 2L), new Anime("Dragon Ball Z", 2L));
 
-    //private final AnimeRepository animeRepository;
+    private final AnimeRepository animeRepository;
     public List<Anime> listAll() {
-        return animes;
+        return animeRepository.findAll();
     }
 
-    public Anime findById(Long id) {
-        return animes.stream()
-                .filter(anime -> anime.getId().equals(id))
-                .findFirst()
+    public Anime findByIdOrThrowBadRequestException(Long id) {
+        return animeRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anime not found"));
+
+    }
+
+    public  Anime save(AnimePostRequestBody animePostRequestBody) {
+        Anime anime = AnimeMapper.INSTANCE.toAnime(animePostRequestBody);
+        return animeRepository.save(anime);
+    }
+
+    public void delete (Long id) {
+        animeRepository.delete(findByIdOrThrowBadRequestException(id));
+    }
+
+    public void replace (AnimePutRequestBody animePutRequestBody) {
+        Anime savedAnime = findByIdOrThrowBadRequestException(animePutRequestBody.getId());
+        Anime anime = AnimeMapper.INSTANCE.toAnime(animePutRequestBody);
+        anime.setId(savedAnime.getId());
+        animeRepository.save(anime);
     }
 }
