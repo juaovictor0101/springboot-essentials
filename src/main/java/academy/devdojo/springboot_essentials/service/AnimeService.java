@@ -9,6 +9,7 @@ import academy.devdojo.springboot_essentials.requests.AnimePutRequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class AnimeService {
 
     }
 
+    @Transactional //anotação usada para dar rollback em uma ação caso aconteça algum tipo de erro no decorrer do fluxo
     public  Anime save(AnimePostRequestBody animePostRequestBody) {
         Anime anime = AnimeMapper.INSTANCE.toAnime(animePostRequestBody);
         return animeRepository.save(anime);
