@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("anime")
+@RequestMapping("animes")
 @Log4j2
 @RequiredArgsConstructor
 public class AnimeController {
@@ -32,6 +32,11 @@ public class AnimeController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<Anime> findById(@PathVariable Long id) {
         return new ResponseEntity<>(animeService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/find")
+    public ResponseEntity<List<Anime>> findByName(@RequestParam String name) {
+        return new ResponseEntity<>(animeService.findByName(name), HttpStatus.OK);
     }
 
     @PostMapping
