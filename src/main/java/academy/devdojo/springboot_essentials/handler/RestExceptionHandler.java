@@ -38,9 +38,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+
+
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+            MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+
         String fields = fieldErrors.stream().map(FieldError::getField).collect(Collectors.joining(", "));
         String fieldsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
 
@@ -49,13 +52,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .status(HttpStatus.BAD_REQUEST.value())
                         .title("Bad Request Exception, Invalid fields")
-                        .details(ex.getMessage())
-                        .developerMessage(ex.getClass().getName())
-                        .field(fields)
-                        .fieldMessage(fieldsMessage)
+                        .details("Check the field(s) error")
+                        .developerMessage(exception.getClass().getName())
+                        .fields(fields)
+                        .fieldsMessage(fieldsMessage)
                         .build(), HttpStatus.BAD_REQUEST
         );
     }
+
 
     protected ResponseEntity<Object> handleExceptionInternal(
             Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -69,4 +73,5 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
         return new ResponseEntity<>(exceptionDetails, headers, status);
     }
+    //to do: refatorar esse código no futuro
 }
