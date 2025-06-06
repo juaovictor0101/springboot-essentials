@@ -19,10 +19,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AnimeService {
-
     private final AnimeRepository animeRepository;
+
     public Page<Anime> listAll(Pageable pageable) {
         return animeRepository.findAll(pageable);
+    }
+
+    public List<Anime> listAllNoPageable() {
+        return animeRepository.findAll();
     }
 
     public List<Anime> findByName(String name) {
