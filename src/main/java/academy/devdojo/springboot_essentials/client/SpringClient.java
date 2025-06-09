@@ -28,6 +28,7 @@ public class SpringClient {
                 });
         log.info(exchange.getBody());
 
+
 //        Anime kingdom  = Anime.builder().name("Kingdom").build();
 //        Anime KingdomSaved = new RestTemplate().postForObject("http://localhost:8080/animes/", kingdom, Anime.class);
 //        log.info("saved anime {}",KingdomSaved);
@@ -39,6 +40,21 @@ public class SpringClient {
                  Anime.class);
         log.info("saved anime {}",vagabondSaved);
 
+        Anime animeToUpdated = vagabondSaved.getBody();
+        animeToUpdated.setName("Vagabond 2, atualizado e 100% filé");
+
+        ResponseEntity<Void> vagabondUpdated = new RestTemplate().exchange("http://localhost:8080/animes",
+                HttpMethod.PUT,
+                new HttpEntity<>(animeToUpdated, createJsonHeader()),
+                Void.class);
+        log.info(vagabondUpdated);
+
+        ResponseEntity<Void> vagabondDeleted = new RestTemplate().exchange("http://localhost:8080/animes/{id}",
+                HttpMethod.DELETE,
+                null,
+                Void.class,
+                animeToUpdated.getId());
+        log.info(vagabondDeleted);
     }
 
     private static HttpHeaders createJsonHeader(){
@@ -46,4 +62,6 @@ public class SpringClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
+
+
 }
