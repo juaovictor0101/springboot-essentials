@@ -12,5 +12,4 @@ Repositório dedicado ao estudo e experimentação com tecnologias do ecossistem
 - ✅ **Spring Security** – Autenticação e autorização
 - ✅ **Spring Validation** – Validação de dados
 - ✅ **Spring Test** – Testes automatizados com suporte ao contexto Spring
-- ⏳ **Spring Cloud** – Microsserviços e arquitetura distribuída (em breve)
 
