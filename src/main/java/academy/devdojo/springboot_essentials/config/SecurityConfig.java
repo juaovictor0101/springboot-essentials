@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -21,63 +22,61 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 @Log4j2
 public class SecurityConfig {
     private final SpringBootEssentialsUserDetailsService springBootEssentialsUserDetailsService;
 
     /**
-    BasicAuthenticationFiler
-     UsernamePasswordAuthenticationFilter
-     DefaultLoginPageGeneratingFilter
-     DefaultLogoutPageGeneratingFilter
-     FilterSecurityInterceptor
-
-     O springsecurity funciona com várias camadas de filtros, acima estão algumas delas em ordem
-     basicamente é: Authentication (validação dos dados do usuários) -> Authorization (liberação dos privilégios do usuários (acessos)
+     * BasicAuthenticationFiler
+     * UsernamePasswordAuthenticationFilter
+     * DefaultLoginPageGeneratingFilter
+     * DefaultLogoutPageGeneratingFilter
+     * FilterSecurityInterceptor
+     * <p>
+     * O springsecurity funciona com várias camadas de filtros, acima estão algumas delas em ordem
+     * basicamente é: Authentication (validação dos dados do usuários) -> Authorization (liberação dos privilégios do usuários (acessos)
      **/
 
-    //configurando a necessidade de ter um usuário autenticado para ter acesso a aplicação com requisições http
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                //desativando autenticação via csrf apenas para facilitar no curso, o correto é sempre estar ativada em produção.
                 .csrf(csrf -> csrf.disable())
-//                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/animes/admin/**").hasRole("ADMIN")
+                        .requestMatchers("animes/**").hasRole("USER")
                         .anyRequest().authenticated())
+                .authenticationProvider(authenticationProvider())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        log.info("Password encoded {}", passwordEncoder.encode("SenhaTeste"));
+        log.info("Password encoded {}", passwordEncoder.encode("academy"));
         return passwordEncoder;
     }
 
-    //configurando os detalhes do usuário em memória, nesse caso, usuario, senha, e cargo.
+    //metodo para autenticar usuário em memória direto
 //    @Bean
-//    public InMemoryUserDetailsManager userDetailsService() {
-//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        UserDetails user1 = User.withUsername("joao")
-//                .password(passwordEncoder.encode("SenhaTeste"))
+//    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+//        UserDetails user1 = User.withUsername("admin2")
+//                .password(passwordEncoder().encode("academy"))
 //                .roles("USER", "ADMIN")
 //                .build();
-//        UserDetails user2 = User.withUsername("victor")
-//                .password(passwordEncoder.encode("SenhaTeste"))
+//        UserDetails user2 = User.withUsername("user2")
+//                .password(passwordEncoder().encode("academy"))
 //                .roles("USER")
 //                .build();
-//        return new InMemoryUserDetailsManager(user1,user2);
+//        return new InMemoryUserDetailsManager(user1, user2);
 //
 //    }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig) throws Exception {
-
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 

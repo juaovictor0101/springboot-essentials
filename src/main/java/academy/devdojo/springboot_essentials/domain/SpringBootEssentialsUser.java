@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Builder
 public class SpringBootEssentialsUser implements UserDetails {
 
-    @NotEmpty(message = "The anime name cannot be empty")
+    @NotEmpty(message = "The user's name cannot be empty")
     private String name;
 
     @Id
@@ -37,19 +37,19 @@ public class SpringBootEssentialsUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(authorities.split(", "))
+        return Arrays.stream(authorities.split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
     @Override
     public String getPassword() {
-        return this.getPassword();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return this.getUsername();
+        return this.username;
     }
 
     @Override
