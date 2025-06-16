@@ -4,9 +4,13 @@ import academy.devdojo.springboot_essentials.domain.Anime;
 import academy.devdojo.springboot_essentials.requests.AnimePostRequestBody;
 import academy.devdojo.springboot_essentials.requests.AnimePutRequestBody;
 import academy.devdojo.springboot_essentials.service.AnimeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,7 +33,9 @@ public class AnimeController {
 
     //localhost:8080/anime/list
     @GetMapping
-    public ResponseEntity<Page<Anime>> list(Pageable pageable) {
+    @Operation (summary = "List all animes paginated",description = "The default size is 20, use the parameter size to change the default value",
+    tags = {"anime"})
+    public ResponseEntity<Page<Anime>> list(@ParameterObject  Pageable pageable) {
         return new ResponseEntity<>(animeService.listAll(pageable), HttpStatus.OK);
     }
 
@@ -63,6 +69,11 @@ public class AnimeController {
     }
 
     @DeleteMapping(path = "/admin/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When anime does not exists in the database"),
+            @ApiResponse(responseCode = "403", description = "When the user does not have permission to execute this request"),
+    })
     public ResponseEntity<Void> delete(@PathVariable long id) {
         animeService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
