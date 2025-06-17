@@ -21,9 +21,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: info, health, metrics
+        include: info, health, metrics, prometheus
 
 info:
   app: Spring Boot Essentials
-  website: https://www.linkedin.com/in/joaovictor0101/
+  website: https://www.linkedin.com/in/joaovictor0101
   github: https://github.com/juaovictor0101/springboot-essentials
