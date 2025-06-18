@@ -1,4 +1,5 @@
-version: '3.1'
+version: '3.8'
+
 services:
   db:
     image: mysql
@@ -9,6 +10,8 @@ services:
       - "3307:3306"
     volumes:
       - devdojo_data:/var/lib/mysql
+    networks:
+      - monitoring-net
 
   prometheus:
     image: prom/prometheus:latest
@@ -21,6 +24,22 @@ services:
       - "9090:9090"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - monitoring-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring-net
 
 volumes:
   devdojo_data:
+
+networks:
+  monitoring-net:
+    driver: bridge

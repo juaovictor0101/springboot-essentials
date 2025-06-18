@@ -5,6 +5,8 @@ server:
   address: 0.0.0.0
 
 spring:
+  application:
+    name: springboot-essentials
   datasource:
     url: jdbc:mysql://localhost:3307/anime?createDatabaseIfNotExist=true
     password: root
