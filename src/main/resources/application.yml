@@ -8,9 +8,12 @@ spring:
   application:
     name: springboot-essentials
   datasource:
+
     url: jdbc:mysql://localhost:3307/anime?createDatabaseIfNotExist=true
     password: root
     username: root
+    hikari:
+      initialization-fail-timeout: 3000
   jpa:
     hibernate:
       ddl-auto: update
@@ -31,3 +34,14 @@ info:
   app: Spring Boot Essentials
   website: https://www.linkedin.com/in/joaovictor0101
   github: https://github.com/juaovictor0101/springboot-essentials
+
+---
+# Profile para Docker
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://db:3306/anime?createDatabaseIfNotExist=true}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
